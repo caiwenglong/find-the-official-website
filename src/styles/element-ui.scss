@@ -47,3 +47,15 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.no-required .el-form-item__label {
+  padding-left: 9px;
+}
+
+.el-table th>.cell {
+  padding-left: 14px;
+}
+
+.el-icon-search {
+  cursor: pointer;
+}
