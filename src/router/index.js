@@ -63,7 +63,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'add-website',
         component: () => import('@/views/add-website/index'),
-        meta: { title: '添加网站', icon: '' }
+        meta: { title: '添加网站', icon: 'add-website' }
       }
     ]
   },
@@ -76,7 +76,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'manege-website',
         component: () => import('@/views/manage-website/index'),
-        meta: { title: '管理网站', icon: '' }
+        meta: { title: '管理网站', icon: 'mange-website' }
       }
     ]
   },

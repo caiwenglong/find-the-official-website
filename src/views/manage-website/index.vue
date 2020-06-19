@@ -1,5 +1,11 @@
 <template>
   <div class="page-manage-website">
+    <div class="btn-wrapper">
+      <el-button
+        size="mini"
+        type="danger"
+        @click="handleBatchDelete()">批量删除</el-button>
+    </div>
     <el-table
       ref="multipleTableWebsite"
       :data="tableData"
@@ -71,7 +77,7 @@
         header-align="center"
         align="center"
         label="操作">
-        <template slot="header" slot-scope="scope">
+        <template slot="header">
           <el-input
             v-model="keyValue"
             size="mini"
@@ -89,8 +95,18 @@
             @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
-    </el-table
-      >
+    </el-table>
+    <div class="pagination-wrapper">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[5, 10, 20, 50, 100]"
+        :page-size="5"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -128,22 +144,6 @@
     address: 'https://www.baidu.com/',
     url: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png'
   }, {
-    dateCreate: '2016-05-08',
-    dateModified: '2020-05-03',
-    name: '百度',
-    hitsToday: '123',
-    hitsTotal: '123123',
-    address: 'https://www.baidu.com/',
-    url: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png'
-  }, {
-    dateCreate: '2016-05-06',
-    dateModified: '2020-05-04',
-    name: '百度',
-    hitsToday: '123',
-    hitsTotal: '123123',
-    address: 'https://www.baidu.com/',
-    url: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png'
-  }, {
     dateCreate: '2016-05-07',
     dateModified: '2020-05-01',
     name: '百度',
@@ -155,15 +155,27 @@
   export default {
     data() {
       return {
-        tableData: tableData,
-        multipleSelection: [],
-        keyValue: ''
+        tableData: tableData, // 表格数据
+        multipleSelection: [], // 选择的数据项
+        keyValue: '', // 关键字搜索
+        currentPage: 1 // 当前页
       }
     },
     methods: {
       handleSelectionChange(val) {
         console.log(val)
         this.multipleSelection = val
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`)
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`)
+      },
+      handleEdit() {},
+      handleDelete() {},
+      handleBatchDelete() {
+        console.log(this.multipleSelection)
       }
     }
   }
@@ -176,5 +188,13 @@
     img {
       width: 100%;
     }
+  }
+  .pagination-wrapper {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .btn-wrapper {
+    margin-top: 20px;
+    padding-left: 20px;
   }
 </style>
