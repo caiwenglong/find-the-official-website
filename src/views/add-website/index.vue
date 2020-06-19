@@ -17,6 +17,22 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="关键字：" prop="keywords">
+        <el-select
+          v-model="formAddWebsite.keywords"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          placeholder="请输入网站关键字">
+          <el-option
+            v-for="item in keywordOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item class="no-required" label="排名竞价：" prop="delivery">
         <el-switch v-model="formAddWebsite.delivery" />
       </el-form-item>
@@ -62,7 +78,8 @@
     price: 1,
     payMode: '1',
     delivery: false,
-    bidding: false
+    bidding: false,
+    keywords: ''
   }
   /* 行业分类 */
   const industryCategory = [
@@ -144,6 +161,17 @@
     }
   ]
 
+  const keywordOptions = [{
+      value: 'HTML',
+      label: 'HTML'
+    }, {
+      value: 'CSS',
+      label: 'CSS'
+    }, {
+      value: 'JavaScript',
+      label: 'JavaScript'
+    }]
+
   export default {
     name: 'AddWebsite',
     data: function() {
@@ -159,7 +187,7 @@
       return {
         formAddWebsite: Object.assign({}, defaultForm),
         industryCategory: industryCategory,
-        pricePlaceholder: '请输入价格',
+        keywordOptions: keywordOptions,
         controls: false,
         rulesAddWebsite: {
           name: [

@@ -17,9 +17,10 @@
       <div class="el-upload__text">将excel文件拖到此处，或<em>点击上传</em></div>
       <div slot="tip" class="el-upload__tip">只能上传xlsx文件，且不超过10M</div>
     </el-upload>
-    <br>
-    <el-button size="small" type="primary" @click="handleUploadFile">立即上传</el-button>
-    <el-button size="small" @click="handleCancel">取消</el-button>
+    <div class="btn-wrapper">
+      <el-button size="small" type="primary" @click="handleUploadFile">立即上传</el-button>
+      <el-button size="small" @click="handleCancel">取消</el-button>
+    </div>
   </div>
 </template>
 
@@ -108,4 +109,7 @@
    margin-left: -180px;
    text-align: center;
  }
+  .btn-wrapper {
+    margin-top: 32px;
+  }
 </style>
