@@ -44,8 +44,9 @@
         </el-upload>
       </el-form-item>
       <el-form-item class="btn-wrapper">
-        <el-button type="primary" @click="onSubmit('addWebsiteForm')">添加</el-button>
-        <el-button @click="onCancel">取消</el-button>
+        <el-button type="success" @click="linkToUploadWebsite">通过excel批量上传</el-button>
+        <el-button type="primary" @click="handleSubmit('addWebsiteForm')">添加</el-button>
+        <el-button @click="handleCancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -187,7 +188,7 @@
       rulesRequired(message, triggerEvent) {
         return { required: true, message: message, trigger: triggerEvent || 'blur' }
       },
-      onSubmit(formName) {
+      handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
             console.log(valid + 'qqqq')
@@ -196,7 +197,12 @@
           }
         })
       },
-      onCancel() {}
+      handleCancel() {
+        this.$router.push({ name: 'manege-website' })
+      },
+      linkToUploadWebsite() {
+        this.$router.push({ name: 'upload-website' })
+      }
     }
   }
 </script>
@@ -204,7 +210,6 @@
 <style scoped lang="scss">
   .page-add-website {
     width: 100%;
-    padding: 20px;
   }
   .form-add-website {
     width: 60%;
@@ -216,5 +221,7 @@
   .btn-wrapper {
     width: 70%;
     text-align: center;
+    margin-top: 52px;
+    margin-bottom: 0;
   }
 </style>

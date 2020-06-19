@@ -194,7 +194,6 @@
     margin-top: 20px;
   }
   .btn-wrapper {
-    margin-top: 20px;
     padding-left: 20px;
   }
 </style>

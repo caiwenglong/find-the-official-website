@@ -67,7 +67,18 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/upload-website',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'upload-website',
+        component: () => import('@/views/upload-website/index'),
+        meta: { title: '批量上传网站', icon: 'upload-website' }
+      }
+    ]
+  },
   {
     path: '/manage=website',
     component: Layout,

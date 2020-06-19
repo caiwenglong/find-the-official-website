@@ -59,3 +59,11 @@
 .el-icon-search {
   cursor: pointer;
 }
+
+.page-add-website {
+  .el-upload__tip {
+    padding-left: 94px;
+    line-height: 1;
+    margin-top: 0;
+  }
+}
