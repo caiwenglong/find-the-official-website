@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import split from 'lodash/split'
 
 const getDefaultState = () => {
   return {
@@ -37,10 +38,11 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
+        if (response.data.token) {
+          commit('SET_TOKEN', response.data.token)
+          setToken(response.data.token)
+        }
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -57,17 +59,18 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, name, avatar } = data
+        const { role, nickname, avatar } = data.result
 
         // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
+        const rolesArray = split(role, ',')
+        if (!rolesArray || rolesArray.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
 
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
+        commit('SET_ROLES', rolesArray)
+        commit('SET_NAME', nickname)
         commit('SET_AVATAR', avatar)
-        resolve(data)
+        resolve(rolesArray)
       }).catch(error => {
         reject(error)
       })

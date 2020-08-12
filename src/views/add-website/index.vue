@@ -24,13 +24,14 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入网站关键字">
+          placeholder="请输入网站关键字"
+        >
           <el-option
             v-for="item in keywordOptions"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item class="no-required" label="排名竞价：" prop="delivery">
@@ -171,6 +172,7 @@
       value: 'JavaScript',
       label: 'JavaScript'
     }]
+  import { addWebsite } from '../../api/add-website'
 
   export default {
     name: 'AddWebsite',
@@ -219,7 +221,9 @@
       handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            console.log(valid + 'qqqq')
+            addWebsite().then(res => {
+              console.log(res)
+            })
           } else {
             console.log(valid)
           }
