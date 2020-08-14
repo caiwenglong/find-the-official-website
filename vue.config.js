@@ -31,8 +31,16 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    open: false,
     proxy: {
+      [process.env.VUE_APP_BASE_ADMIN_API]: {
+        target: process.env.VUE_APP_BASE_ADMIN_URL,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_ADMIN_API]: ''
+        }
+      },
       [process.env.VUE_APP_BASE_API]: {
         target: process.env.VUE_APP_BASE_URL,
         ws: true,

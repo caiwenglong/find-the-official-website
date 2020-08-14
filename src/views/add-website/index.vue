@@ -221,8 +221,13 @@
       handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            addWebsite().then(res => {
-              console.log(res)
+            addWebsite(this.formAddWebsite).then(res => {
+              if (res && res.code === 'OW20000') {
+                this.$message({
+                  message: `网站${res.data.website.name}:${res.data.website.url}添加成功！`,
+                  type: 'success'
+                });
+              }
             })
           } else {
             console.log(valid)
