@@ -72,6 +72,7 @@
 <script>
   /* 网站默认对象 */
   const defaultForm = {
+    idAdmin: '',
     name: '',
     url: '',
     logo: '',
@@ -173,6 +174,7 @@
       label: 'JavaScript'
     }]
   import { addWebsite } from '../../api/add-website'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'AddWebsite',
@@ -209,6 +211,11 @@
         }
       }
     },
+    computed: {
+      ...mapGetters([
+        'idAdmin'
+      ])
+    },
     methods: {
       isURL(url) {
         const strRegex = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/|www\.)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/
@@ -221,12 +228,14 @@
       handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
+            debugger
+            this.formAddWebsite.idAdmin = this.idAdmin
             addWebsite(this.formAddWebsite).then(res => {
               if (res && res.code === 'OW20000') {
                 this.$message({
                   message: `网站${res.data.website.name}:${res.data.website.url}添加成功！`,
                   type: 'success'
-                });
+                })
               }
             })
           } else {

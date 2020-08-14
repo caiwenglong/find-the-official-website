@@ -2,8 +2,7 @@ import request from '@/utils/request'
 
 export function getList(params) {
   return request({
-    url: '/vue-admin-template/table/list',
-    method: 'get',
-    params
+    url: '/admin-api/uAdmin/tb-website/selectAllWebsite',
+    method: 'get'
   })
 }

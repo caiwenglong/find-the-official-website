@@ -7,6 +7,7 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
+    idAdmin: '',
     avatar: '',
     roles: []
   }
@@ -20,6 +21,9 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_ID: (state, id) => {
+    state.idAdmin = id
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -59,7 +63,7 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { role, nickname, avatar } = data.result
+        const { role, nickname, avatar, id } = data.result
 
         // roles must be a non-empty array
         const rolesArray = split(role, ',')
@@ -70,6 +74,7 @@ const actions = {
         commit('SET_ROLES', rolesArray)
         commit('SET_NAME', nickname)
         commit('SET_AVATAR', avatar)
+        commit('SET_ID', id)
         resolve(rolesArray)
       }).catch(error => {
         reject(error)
