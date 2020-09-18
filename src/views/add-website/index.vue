@@ -7,13 +7,13 @@
       <el-form-item label="网站地址：" prop="url">
         <el-input v-model="formAddWebsite.url" clearable />
       </el-form-item>
-      <el-form-item label="网站分类：" prop="category">
-        <el-select v-model="formAddWebsite.category" filterable placeholder="请选择分类">
+      <el-form-item label="网站分类：" prop="idCategory">
+        <el-select v-model="formAddWebsite.idCategory" filterable placeholder="请选择分类">
           <el-option
             v-for="item in industryCategory"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -76,92 +76,13 @@
     name: '',
     url: '',
     logo: '',
-    category: '',
+    idCategory: '',
     price: 1,
     payMode: '1',
     delivery: false,
     bidding: false,
     keywords: ''
   }
-  /* 行业分类 */
-  const industryCategory = [
-    {
-      value: '农林牧渔',
-      label: '农林牧渔'
-    },
-    {
-      value: '医药卫生',
-      label: '医药卫生'
-    },
-    {
-      value: '建筑建材',
-      label: '建筑建材'
-    },
-    {
-      value: '冶金矿产',
-      label: '冶金矿产'
-    },
-    {
-      value: '石油化工',
-      label: '石油化工'
-    },
-    {
-      value: '交通运输',
-      label: '交通运输'
-    },
-    {
-      value: '信息产业',
-      label: '信息产业'
-    },
-    {
-      value: '机械机电',
-      label: '机械机电'
-    },
-    {
-      value: '轻工食品',
-      label: '轻工食品'
-    },
-    {
-      value: '服装纺织',
-      label: '服装纺织'
-    },
-    {
-      value: '专业服务',
-      label: '专业服务'
-    },
-    {
-      value: '安全防护',
-      label: '安全防护'
-    },
-    {
-      value: '环保绿化',
-      label: '环保绿化'
-    },
-    {
-      value: '旅游休闲',
-      label: '旅游休闲'
-    },
-    {
-      value: '办公文教',
-      label: '办公文教'
-    },
-    {
-      value: '电子电工',
-      label: '电子电工'
-    },
-    {
-      value: '玩具礼品',
-      label: '玩具礼品'
-    },
-    {
-      value: '家居用品',
-      label: '家居用品'
-    },
-    {
-      value: '体育用品',
-      label: '体育用品'
-    }
-  ]
 
   const keywordOptions = [{
       value: 'HTML',
@@ -173,7 +94,7 @@
       value: 'JavaScript',
       label: 'JavaScript'
     }]
-  import { addWebsite } from '../../api/add-website'
+  import { addWebsite, getWbCategories } from '../../api/add-website'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -190,7 +111,7 @@
       }
       return {
         formAddWebsite: Object.assign({}, defaultForm),
-        industryCategory: industryCategory,
+        industryCategory: [],
         keywordOptions: keywordOptions,
         controls: false,
         rulesAddWebsite: {
@@ -211,12 +132,16 @@
         }
       }
     },
+    created() {
+      this.handleGetWbCategories()
+    },
     computed: {
       ...mapGetters([
         'idAdmin'
       ])
     },
     methods: {
+      // 验证Url
       isURL(url) {
         const strRegex = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/|www\.)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/
         const urlReg = new RegExp(strRegex)
@@ -225,10 +150,21 @@
       rulesRequired(message, triggerEvent) {
         return { required: true, message: message, trigger: triggerEvent || 'blur' }
       },
+
+      // 获取网站分类
+      handleGetWbCategories() {
+        getWbCategories().then(res => {
+          console.log(res.data.wbCategoryList)
+          if (res.data && res.data.wbCategoryList && res.data.wbCategoryList.length) {
+            this.industryCategory = res.data.wbCategoryList
+          }
+        })
+      },
+
+      // 提交表单
       handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            debugger
             this.formAddWebsite.idAdmin = this.idAdmin
             addWebsite(this.formAddWebsite).then(res => {
               if (res && res.code === 'OW20000') {
@@ -237,6 +173,8 @@
                   type: 'success'
                 })
               }
+            }).catch(err => {
+              console.log(err.message)
             })
           } else {
             console.log(valid)

@@ -1,6 +1,8 @@
 <template>
   <div class="page-upload-website">
     <el-upload
+      ref="uploadWebsite"
+      name="file"
       drag
       :limit="limitNum"
       :auto-upload="false"
@@ -25,11 +27,15 @@
 </template>
 
 <script>
+
+  import { batchAddWebsite } from '@/api/add-website'
+
   export default {
     data() {
       return {
         limitNum: 1, // 上传excel时，同时允许上传的最大数
-        fileList: [] // excel文件列表
+        fileList: [], // excel文件列表
+        file: ''
       }
     },
     methods: {
@@ -39,14 +45,11 @@
       },
       // 文件状态改变时的钩子
       fileChange(file, fileList) {
-        console.log(file.raw)
+        this.file = file.raw
         this.fileList.push(file.raw)
-        console.log(this.fileList)
       },
       // 上传文件之前的钩子, 参数为上传的文件,若返回 false 或者返回 Promise 且被 reject，则停止上传
       beforeUploadFile(file) {
-        console.log('before upload')
-        console.log(file)
         const extension = file.name.substring(file.name.lastIndexOf('.') + 1)
         const size = file.size / 1024 / 1024
         if (extension !== 'xlsx') {
@@ -58,9 +61,11 @@
       },
       // 文件上传成功时的钩子
       handleSuccess(res, file, fileList) {
+        this.file = file
         this.$message.success('文件上传成功')
       },
       // 文件上传失败时的钩子
+      // eslint-disable-next-line handle-callback-err
       handleError(err, file, fileList) {
         this.$message.error('文件上传失败')
       },
@@ -75,21 +80,19 @@
         if (this.fileList.length === 0) {
           this.$message.warning('请上传文件')
         } else {
-          const form = new FormData()
-          form.append('file', this.fileList)
-          this.$axios({
-            method: 'post',
-            url: '/statistical/uploadbug',
-            headers: {
-              'Content-type': 'multipart/form-data'
-            },
-            data: form
-          }).then(
-            res => {
-
-              // eslint-disable-next-line handle-callback-err
-            }, err => {
-            })
+          const formData = new FormData()
+          formData.append('file', this.file)
+          this._tools.eleEnc.eleLoading()
+          batchAddWebsite(formData).then(res => {
+            this._tools.eleEnc.closeEleLoading()
+            if (res.code === 'OW20000') {
+              const cfmObj = {
+                type: 'success',
+                info: '添加成功'
+              }
+              this._tools.eleEnc.ybyMessage(cfmObj)
+            }
+          })
         }
       },
       handleCancel() {

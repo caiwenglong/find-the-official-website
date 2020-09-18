@@ -7,3 +7,18 @@ export function addWebsite(form) {
     data: form
   })
 }
+
+export function batchAddWebsite(file) {
+  return request({
+    url: '/admin-api/uAdmin/tb-website/batchAddWebsite',
+    method: 'post',
+    data: file
+  })
+}
+
+export function getWbCategories() {
+  return request({
+    url: '/admin-api/uAdmin/wb-category/getAllWbCategory',
+    method: 'get'
+  })
+}

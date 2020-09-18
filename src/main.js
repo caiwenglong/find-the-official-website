@@ -17,6 +17,8 @@ import '@/permission' // permission control
 
 import * as _ from 'lodash'
 
+import { tools } from './utils/tools/index'
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -35,6 +37,7 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 Vue.prototype._ = _
+Vue.prototype._tools = tools
 
 Vue.config.productionTip = false
 
