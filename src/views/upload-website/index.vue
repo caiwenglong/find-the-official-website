@@ -29,6 +29,7 @@
 <script>
 
   import { batchAddWebsite } from '@/api/add-website'
+  import { mapGetters } from 'vuex'
 
   export default {
     data() {
@@ -37,6 +38,11 @@
         fileList: [], // excel文件列表
         file: ''
       }
+    },
+    computed: {
+      ...mapGetters([
+        'idAdmin'
+      ])
     },
     methods: {
       // 文件超出个数限制时的钩子
@@ -82,6 +88,7 @@
         } else {
           const formData = new FormData()
           formData.append('file', this.file)
+          formData.append('idAdmin', this.idAdmin)
           this._tools.eleEnc.eleLoading()
           batchAddWebsite(formData).then(res => {
             this._tools.eleEnc.closeEleLoading()
