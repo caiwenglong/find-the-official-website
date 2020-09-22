@@ -7,8 +7,8 @@
       <el-form-item label="网站地址：" prop="url">
         <el-input v-model="formAddWebsite.url" clearable />
       </el-form-item>
-      <el-form-item label="网站分类：" prop="idCategory">
-        <el-select v-model="formAddWebsite.idCategory" filterable placeholder="请选择分类">
+      <el-form-item label="网站分类：" prop="nameCategory">
+        <el-select v-model="formAddWebsite.nameCategory" filterable placeholder="请选择分类" @change="categorySelect">
           <el-option
             v-for="item in industryCategory"
             :key="item.id"
@@ -61,8 +61,8 @@
         </el-upload>
       </el-form-item>
       <el-form-item class="btn-wrapper">
-        <el-button type="success" @click="linkToUploadWebsite">通过excel批量上传</el-button>
-        <el-button type="primary" @click="handleSubmit('addWebsiteForm')">添加</el-button>
+        <el-button v-if="!isEdit" type="success" @click="linkToUploadWebsite">通过excel批量上传</el-button>
+        <el-button type="primary" @click="handleSubmit('addWebsiteForm')">{{btnText}}</el-button>
         <el-button @click="handleCancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -72,11 +72,13 @@
 <script>
   /* 网站默认对象 */
   const defaultForm = {
+    id: '',
     idAdmin: '',
     name: '',
     url: '',
     logo: '',
     idCategory: '',
+    nameCategory: '',
     price: 1,
     payMode: '1',
     delivery: false,
@@ -94,15 +96,16 @@
       value: 'JavaScript',
       label: 'JavaScript'
     }]
-  import { addWebsite, getWbCategories } from '../../api/add-website'
+  import { addWebsite, modifyWebsite, getWbCategories } from '../../api/add-website'
   import { mapGetters } from 'vuex'
+  import { isURL } from '@/utils/validate'
 
   export default {
     name: 'AddWebsite',
     data: function() {
       const ValidateURL = (rule, value, callback) => {
         let message = ''
-        if (!this.isURL(value)) {
+        if (!isURL(value)) {
           message = '请输入正确的URL地址'
           callback(new Error(message))
         } else {
@@ -110,7 +113,9 @@
         }
       }
       return {
+        btnText: '添加',
         formAddWebsite: Object.assign({}, defaultForm),
+        isEdit: false,
         industryCategory: [],
         keywordOptions: keywordOptions,
         controls: false,
@@ -132,8 +137,11 @@
         }
       }
     },
-    created() {
-      this.handleGetWbCategories()
+    async created() {
+      await this.handleGetWbCategories()
+      this.handleIsEdit()
+      this.handleSetCategoryName(this.$route.params.row.idCategory)
+      this.handleSetText()
     },
     computed: {
       ...mapGetters([
@@ -141,41 +149,78 @@
       ])
     },
     methods: {
-      // 验证Url
-      isURL(url) {
-        const strRegex = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/|www\.)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/
-        const urlReg = new RegExp(strRegex)
-        return urlReg.test(url)
-      },
       rulesRequired(message, triggerEvent) {
         return { required: true, message: message, trigger: triggerEvent || 'blur' }
       },
 
       // 获取网站分类
       handleGetWbCategories() {
-        getWbCategories().then(res => {
-          console.log(res.data.wbCategoryList)
-          if (res.data && res.data.wbCategoryList && res.data.wbCategoryList.length) {
-            this.industryCategory = res.data.wbCategoryList
-          }
+        return new Promise((resolve, reject) => {
+          getWbCategories().then(res => {
+            if (res.data && res.data.wbCategoryList && res.data.wbCategoryList.length) {
+              this.industryCategory = res.data.wbCategoryList
+              resolve(res)
+            }
+          }).catch(err => {
+            reject(err)
+          })
         })
+      },
+
+      handleIsEdit() {
+        if (this.$route.params.row) {
+          this.isEdit = true
+          this.formAddWebsite = Object.assign(this.formAddWebsite, this.$route.params.row)
+        }
+      },
+
+      // 通过分类ID获取分类名称
+      handleSetCategoryName(categoryId) {
+        const category = this._lodash.find(this.industryCategory, function(category) {
+          return category.id === categoryId
+        })
+        if (category && category.id) {
+          this.formAddWebsite.idCategory = category.id
+        }
+        if (category && category.name) {
+          this.formAddWebsite.nameCategory = category.name
+        }
       },
 
       // 提交表单
       handleSubmit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            this.formAddWebsite.idAdmin = this.idAdmin
-            addWebsite(this.formAddWebsite).then(res => {
-              if (res && res.code === 'OW20000') {
-                this.$message({
-                  message: `网站${res.data.website.name}:${res.data.website.url}添加成功！`,
-                  type: 'success'
-                })
-              }
-            }).catch(err => {
-              console.log(err.message)
-            })
+            this._tools.eleEnc.eleLoading()
+            if (this.isEdit) {
+              // 修改网站信息
+              modifyWebsite(this.formAddWebsite).then(res => {
+                this._tools.eleEnc.closeEleLoading()
+                if (res && res.code === 'OW20000') {
+                  const objMsg = {
+                    info: '网站修改成功！'
+                  }
+                  this._tools.eleEnc.ybyMessage(objMsg)
+                  this.$router.push({ name: 'manege-website' })
+                }
+              })
+            } else {
+              // 添加网站
+              // 设置管理员ID
+              this.formAddWebsite.idAdmin = this.idAdmin
+              addWebsite(this.formAddWebsite).then(res => {
+                if (res && res.code === 'OW20000') {
+                  this.$message({
+                    message: `网站${res.data.website.name}:${res.data.website.url}添加成功！`,
+                    type: 'success'
+                  })
+                }
+                this._tools.eleEnc.closeEleLoading()
+              }).catch(err => {
+                console.log(err.message)
+                this._tools.eleEnc.closeEleLoading()
+              })
+            }
           } else {
             console.log(valid)
           }
@@ -186,6 +231,14 @@
       },
       linkToUploadWebsite() {
         this.$router.push({ name: 'upload-website' })
+      },
+      categorySelect(value) {
+        this.formAddWebsite.idCategory = value
+      },
+      handleSetText() {
+        if (this.isEdit) {
+          this.btnText = '修改'
+        }
       }
     }
   }

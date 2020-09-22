@@ -6,7 +6,7 @@ import {
 } from 'element-ui'
 
 const defaultMsg = {
-  type: 'warning',
+  type: 'success',
   info: '提示信息',
   title: '提示',
   cfmButtonText: '确定',

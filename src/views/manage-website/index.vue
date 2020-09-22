@@ -1,12 +1,23 @@
 <template>
   <div class="page-manage-website">
-    <div class="btn-wrapper">
-      <el-button
-        size="mini"
-        type="danger"
-        @click="handleBatchDelete()"
-      >批量删除</el-button>
-    </div>
+    <el-row :gutter="20"  class="operation-bar">
+      <el-col :span="6">
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleBatchDelete()"
+        >批量删除</el-button>
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <el-input
+          v-model="keyValue"
+          size="mini"
+          placeholder="输入关键字搜索"
+        >
+          <i slot="suffix" class="el-input__icon el-icon-search" />
+        </el-input>
+      </el-col>
+    </el-row>
     <el-table
       ref="multipleTableWebsite"
       v-loading="listLoading"
@@ -88,15 +99,6 @@
         align="center"
         label="操作"
       >
-        <template slot="header">
-          <el-input
-            v-model="keyValue"
-            size="mini"
-            placeholder="输入关键字搜索"
-          >
-            <i slot="suffix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </template>
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -126,22 +128,12 @@
 
 <script>
   import { mapGetters } from 'vuex'
-
-  const tableData = [{
-    dateCreate: '2016-05-03',
-    dateModified: '2020-05-08',
-    name: '百度',
-    hitsToday: '123',
-    hitsTotal: '123123',
-    address: 'https://www.baidu.com/',
-    url: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png'
-  }]
   import { getList } from '@/api/table'
   export default {
     data() {
       return {
         listLoading: false,
-        tableData: tableData, // 表格数据
+        tableData: [], // 表格数据
         multipleSelection: [], // 选择的数据项
         keyValue: '', // 关键字搜索
         currentPage: 1 // 当前页
@@ -173,10 +165,15 @@
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
       },
-      handleEdit() {},
+      handleEdit(index, row) {
+        this.$router.push({ name: 'add-website', params: { row: row }})
+      },
       handleDelete() {},
       handleBatchDelete() {
         console.log(this.multipleSelection)
+      },
+      handleFilterByKeyword() {
+        console.log(this.keyValue)
       }
     }
   }
