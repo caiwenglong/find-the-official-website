@@ -68,6 +68,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/edit-website',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'edit-website',
+        component: () => import('@/views/add-website/index'),
+        meta: { title: '修改网站', icon: 'add-website' }
+      }
+    ],
+    hidden: true
+  },
+  {
     path: '/upload-website',
     component: Layout,
     children: [

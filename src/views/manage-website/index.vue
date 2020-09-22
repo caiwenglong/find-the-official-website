@@ -166,7 +166,7 @@
         console.log(`当前页: ${val}`)
       },
       handleEdit(index, row) {
-        this.$router.push({ name: 'add-website', params: { row: row }})
+        this.$router.push({ name: 'edit-website', params: { row: row }})
       },
       handleDelete() {},
       handleBatchDelete() {

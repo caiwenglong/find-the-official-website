@@ -20,7 +20,7 @@ export function validUsername(str) {
 }
 
 export function isURL(url) {
-  const strRegex = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/|www\.)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/
-  const urlReg = new RegExp(strRegex)
-  return urlReg.test(url)
+  const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/
+  const objExp = new RegExp(Expression)
+  return objExp.test(url) === true
 }

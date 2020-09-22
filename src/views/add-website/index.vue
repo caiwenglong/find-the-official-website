@@ -140,8 +140,10 @@
     async created() {
       await this.handleGetWbCategories()
       this.handleIsEdit()
-      this.handleSetCategoryName(this.$route.params.row.idCategory)
-      this.handleSetText()
+      if (this.isEdit) {
+        this.handleSetCategoryName(this.$route.params.row.idCategory)
+        this.handleSetEditText()
+      }
     },
     computed: {
       ...mapGetters([
@@ -209,13 +211,14 @@
               // 设置管理员ID
               this.formAddWebsite.idAdmin = this.idAdmin
               addWebsite(this.formAddWebsite).then(res => {
+                this._tools.eleEnc.closeEleLoading()
                 if (res && res.code === 'OW20000') {
                   this.$message({
                     message: `网站${res.data.website.name}:${res.data.website.url}添加成功！`,
                     type: 'success'
                   })
                 }
-                this._tools.eleEnc.closeEleLoading()
+                this.$router.push({ name: 'manege-website' })
               }).catch(err => {
                 console.log(err.message)
                 this._tools.eleEnc.closeEleLoading()
@@ -235,7 +238,7 @@
       categorySelect(value) {
         this.formAddWebsite.idCategory = value
       },
-      handleSetText() {
+      handleSetEditText() {
         if (this.isEdit) {
           this.btnText = '修改'
         }
