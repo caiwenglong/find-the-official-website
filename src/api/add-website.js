@@ -18,9 +18,9 @@ export function batchAddWebsite(file) {
   })
 }
 
-export function getAllWebsiteByUserId(params) {
+export function getAllWebsiteByUserId(params, pageNum, pageSize) {
   return request({
-    url: `/admin-api/uAdmin/tb-website/selectAllWebsite/` + params,
+    url: `/admin-api/uAdmin/tb-website/selectAllWebsite/` + params + '/' + pageNum + '/' + pageSize,
     method: 'get'
   })
 }

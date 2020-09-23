@@ -12,6 +12,7 @@
         <el-input
           v-model="keyValue"
           size="mini"
+          maxlength="10"
           placeholder="输入关键字搜索"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" />
@@ -21,7 +22,7 @@
     <el-table
       ref="multipleTableWebsite"
       v-loading="listLoading"
-      :data="tableData"
+      :data="tableData.filter(data => !keyValue || data.name.toLowerCase().includes(keyValue.toLowerCase()))"
       tooltip-effect="dark"
       style="width: 100%"
       :default-sort="{prop: 'dateModified', order: 'descending'}"
@@ -124,11 +125,11 @@
     </el-table>
     <div class="pagination-wrapper">
       <el-pagination
-        :page-size="5"
+        :page-size="pageSize"
         :current-page="currentPage"
         :page-sizes="[5, 10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="tableData.length"
+        :total="total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -157,7 +158,9 @@
         tableData: [], // 表格数据
         multipleSelection: [], // 选择的数据项
         keyValue: '', // 关键字搜索
-        currentPage: 1 // 当前页
+        currentPage: 1, // 当前页
+        pageSize: 5,
+        total: 0
       }
     },
     computed: {
@@ -172,8 +175,9 @@
     },
     methods: {
       fetchData() {
-        getAllWebsiteByUserId(this.idAdmin).then(response => {
+        getAllWebsiteByUserId(this.idAdmin, this.currentPage, this.pageSize).then(response => {
           this.tableData = response.data.tbWebsites
+          this.total = response.data.total
           for (let i = 0; i < this.tableData.length; i++) {
             // 通过分类ID获取分类名称
             const category = this.handleGetWbCategoryName(this.tableData[i].idCategory)
@@ -204,10 +208,12 @@
         this.multipleSelection = val
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        this.pageSize = val
+        this.fetchData()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        this.currentPage = val
+        this.fetchData()
       },
       handleEdit(index, row) {
         this.$router.push({ name: 'edit-website', params: { row: row }})
@@ -254,9 +260,6 @@
             return item.id === this.idList[i]
           })
         }
-      },
-      handleFilterByKeyword() {
-        console.log(this.keyValue)
       }
     }
   }
