@@ -1,6 +1,6 @@
 <template>
   <div class="page-manage-website">
-    <el-row :gutter="20"  class="operation-bar">
+    <el-row :gutter="20" class="operation-bar">
       <el-col :span="6">
         <el-button
           size="mini"
@@ -63,6 +63,16 @@
       <el-table-column
         header-align="center"
         align="center"
+        label="网站分类"
+        width="120"
+        prop="category"
+        sortable
+      >
+        <template slot-scope="scope">{{ scope.row.categoryName }}</template>
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        align="center"
         prop="hitsToday"
         label="今日点击量"
         width="100"
@@ -82,7 +92,7 @@
         prop="gmtCreate"
         sortable
       >
-        <template slot-scope="scope">{{ scope.row.gmtCreate }}</template>
+        <template slot-scope="scope">{{ scope.row.gmtCreate | dataFormat }}</template>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -92,7 +102,7 @@
         prop="gmtModified"
         sortable
       >
-        <template slot-scope="scope">{{ scope.row.gmtModified }}</template>
+        <template slot-scope="scope">{{ scope.row.gmtModified | dataFormat }}</template>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -128,31 +138,56 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getList } from '@/api/table'
+  import { getAllWebsiteByUserId } from '@/api/add-website'
   export default {
     data() {
       return {
         listLoading: false,
+        industryCategory: [],
         tableData: [], // 表格数据
         multipleSelection: [], // 选择的数据项
         keyValue: '', // 关键字搜索
         currentPage: 1 // 当前页
       }
     },
-    created() {
-      this.fetchData()
-    },
     computed: {
       ...mapGetters([
         'idAdmin'
       ])
     },
+    async created() {
+      await this.handleGetWbCategories()
+      this.fetchData()
+    },
     methods: {
       fetchData() {
         this.listLoading = true
-        getList(this.idAdmin).then(response => {
+        getAllWebsiteByUserId(this.idAdmin).then(response => {
           this.tableData = response.data.tbWebsites
+          for (let i = 0; i < this.tableData.length; i++) {
+            // 通过分类ID获取分类名称
+            const category = this.handleGetWbCategoryName(this.tableData[i].idCategory)
+            if (category.name) {
+              this.tableData[i]['categoryName'] = category.name
+            }
+          }
           this.listLoading = false
+        })
+      },
+      // 获取网站分类
+      handleGetWbCategories() {
+        return new Promise((resolve, reject) => {
+          this.$store.dispatch('website/getWbCategories').then(res => {
+            this.industryCategory = res
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
+      handleGetWbCategoryName(idCategory) {
+        return this._lodash.find(this.industryCategory, category => {
+          return category.id === idCategory
         })
       },
       handleSelectionChange(val) {

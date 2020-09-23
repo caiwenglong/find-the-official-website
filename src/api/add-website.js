@@ -18,6 +18,13 @@ export function batchAddWebsite(file) {
   })
 }
 
+export function getAllWebsiteByUserId(params) {
+  return request({
+    url: `/admin-api/uAdmin/tb-website/selectAllWebsite/` + params,
+    method: 'get'
+  })
+}
+
 // 修改网站信息
 export function modifyWebsite(form) {
   return request({
@@ -31,6 +38,14 @@ export function modifyWebsite(form) {
 export function getWbCategories() {
   return request({
     url: '/admin-api/uAdmin/wb-category/getAllWbCategory',
+    method: 'get'
+  })
+}
+
+// 通过分类ID获取分类名称
+export function getWbCategoryName(idCategory) {
+  return request({
+    url: `/admin-api/uAdmin/wb-category/getWbCategory/${idCategory}`,
     method: 'get'
   })
 }

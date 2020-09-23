@@ -16,8 +16,8 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import * as _ from 'lodash'
-
 import { tools } from './utils/tools/index'
+import * as filters from './plugins/filters'
 
 /**
  * If you don't want to use mock-server
@@ -40,6 +40,10 @@ Vue.prototype._lodash = _
 Vue.prototype._tools = tools
 
 Vue.config.productionTip = false
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 new Vue({
   el: '#app',
