@@ -98,6 +98,7 @@
                 info: '添加成功'
               }
               this._tools.eleEnc.ybyMessage(cfmObj)
+              this.$router.push({ name: 'manege-website' })
             }
           })
         }

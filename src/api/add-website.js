@@ -34,6 +34,23 @@ export function modifyWebsite(form) {
   })
 }
 
+// 通过网站ID删除网站
+export function delWebsiteById(id) {
+  return request({
+    url: `/admin-api/uAdmin/tb-website/delWebsiteById/` + id,
+    method: 'delete'
+  })
+}
+
+// 通过网站ID数组批量删除网站
+export function batchDelWebsite(idList) {
+  return request({
+    url: `/admin-api/uAdmin/tb-website/batchDelWebsite/`,
+    method: 'delete',
+    data: idList
+  })
+}
+
 // 获取所有的分类
 export function getWbCategories() {
   return request({

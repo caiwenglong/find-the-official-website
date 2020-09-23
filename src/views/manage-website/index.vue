@@ -117,7 +117,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="handleDelete(scope.$index, scope.row.id)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -138,12 +138,22 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getAllWebsiteByUserId } from '@/api/add-website'
+  import { getAllWebsiteByUserId, delWebsiteById, batchDelWebsite } from '@/api/add-website'
+  const confirmBatchDel = {
+    type: 'warning',
+    info: '即将删除网站信息！',
+    title: '删除网站信息'
+  }
+  const delMsg = {
+    type: 'success',
+    info: '删除成功'
+  }
   export default {
     data() {
       return {
         listLoading: false,
-        industryCategory: [],
+        industryCategory: [], // 网站分类列表
+        idList: [], // 网站ID列表
         tableData: [], // 表格数据
         multipleSelection: [], // 选择的数据项
         keyValue: '', // 关键字搜索
@@ -156,12 +166,12 @@
       ])
     },
     async created() {
+      this.listLoading = true
       await this.handleGetWbCategories()
       this.fetchData()
     },
     methods: {
       fetchData() {
-        this.listLoading = true
         getAllWebsiteByUserId(this.idAdmin).then(response => {
           this.tableData = response.data.tbWebsites
           for (let i = 0; i < this.tableData.length; i++) {
@@ -191,7 +201,6 @@
         })
       },
       handleSelectionChange(val) {
-        console.log(val)
         this.multipleSelection = val
       },
       handleSizeChange(val) {
@@ -203,9 +212,48 @@
       handleEdit(index, row) {
         this.$router.push({ name: 'edit-website', params: { row: row }})
       },
-      handleDelete() {},
+      handleDelete(index, idWebsite) {
+        this._tools.eleEnc.encConfirm(confirmBatchDel).then(res => {
+          if (res === 'confirm') {
+            this._tools.eleEnc.eleLoading()
+            delWebsiteById(idWebsite).then(res => {
+              if (res.code === 'OW20000') {
+                this.tableData.splice(index, 1)
+                this._tools.eleEnc.closeEleLoading()
+                this._tools.eleEnc.ybyMessage(delMsg)
+              }
+            })
+          }
+        })
+      },
+      // 批量删除网站
       handleBatchDelete() {
-        console.log(this.multipleSelection)
+        this._tools.eleEnc.encConfirm(confirmBatchDel).then(res => {
+          if (res === 'confirm') {
+            this.handleGetIdList()
+            this._tools.eleEnc.eleLoading()
+            batchDelWebsite(this.idList).then(res => {
+              if (res.code === 'OW20000') {
+                this.handleDelTableData()
+                this._tools.eleEnc.closeEleLoading()
+                this._tools.eleEnc.ybyMessage(delMsg)
+                this.$router.push({ name: 'manege-website' })
+              }
+            })
+          }
+        })
+      },
+      handleGetIdList() {
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          this.idList.push(this.multipleSelection[i].id)
+        }
+      },
+      handleDelTableData() {
+        for (let i = 0; i < this.idList.length; i++) {
+          this._lodash.remove(this.tableData, item => {
+            return item.id === this.idList[i]
+          })
+        }
       },
       handleFilterByKeyword() {
         console.log(this.keyValue)

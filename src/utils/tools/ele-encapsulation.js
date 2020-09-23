@@ -22,7 +22,7 @@ export function encConfirm(objMsg) {
   objMsg = Object.assign(defaultMsg, objMsg)
   return MessageBox.confirm(objMsg.info, objMsg.title, {
     cfmButtonText: objMsg.cfmButtonText,
-    cancelButtonText: objMsg.cfmButtonText,
+    cancelButtonText: objMsg.cancelButtonText,
     type: objMsg.type
   }).then((res) => {
     return res
