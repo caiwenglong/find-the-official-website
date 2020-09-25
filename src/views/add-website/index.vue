@@ -62,7 +62,7 @@
       </el-form-item>
       <el-form-item class="btn-wrapper">
         <el-button v-if="!isEdit" type="success" @click="linkToUploadWebsite">通过excel批量上传</el-button>
-        <el-button type="primary" @click="handleSubmit('addWebsiteForm')">{{btnText}}</el-button>
+        <el-button type="primary" @click="handleSubmit('addWebsiteForm')">{{ btnText }}</el-button>
         <el-button @click="handleCancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -137,6 +137,11 @@
         }
       }
     },
+    computed: {
+      ...mapGetters([
+        'idAdmin'
+      ])
+    },
     async created() {
       await this.handleGetWbCategories()
       this.handleIsEdit()
@@ -144,11 +149,6 @@
         this.handleSetCategoryName(this.$route.params.row.idCategory)
         this.handleSetEditText()
       }
-    },
-    computed: {
-      ...mapGetters([
-        'idAdmin'
-      ])
     },
     methods: {
       rulesRequired(message, triggerEvent) {
