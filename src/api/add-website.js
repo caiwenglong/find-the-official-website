@@ -66,3 +66,10 @@ export function getWbCategoryName(idCategory) {
     method: 'get'
   })
 }
+
+export function modifyWebsiteKeywords(websiteId, keywords) {
+  return request({
+    url: `/admin-api/uAdmin/tb-website/modifyWebsiteKeywords/${websiteId}/${keywords}`,
+    method: 'get'
+  })
+}

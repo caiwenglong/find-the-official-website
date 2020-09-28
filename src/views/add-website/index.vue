@@ -25,6 +25,7 @@
           allow-create
           default-first-option
           placeholder="请输入网站关键字"
+          @change="handleKeyWordSel"
         >
           <el-option
             v-for="item in keywordOptions"
@@ -210,6 +211,7 @@
               // 添加网站
               // 设置管理员ID
               this.formAddWebsite.idAdmin = this.idAdmin
+              this.formAddWebsite.keywords = this._tools.commonTools.arrToStr(this.formAddWebsite.keywords)
               addWebsite(this.formAddWebsite).then(res => {
                 this._tools.eleEnc.closeEleLoading()
                 if (res && res.code === 'OW20000') {
@@ -242,6 +244,10 @@
         if (this.isEdit) {
           this.btnText = '修改'
         }
+      },
+      // 关键字选择事件
+      handleKeyWordSel(item) {
+        this._tools.commonTools.arrToStr(item)
       }
     }
   }

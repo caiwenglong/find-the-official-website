@@ -22,10 +22,11 @@
     <el-table
       ref="multipleTableWebsite"
       v-loading="listLoading"
-      :data="tableData.filter(data => !keyValue || data.name.toLowerCase().includes(keyValue.toLowerCase()))"
+      height="430"
       tooltip-effect="dark"
       style="width: 100%"
-      :default-sort="{prop: 'dateModified', order: 'descending'}"
+      :default-sort="{prop: 'gmtModified', order: 'descending'}"
+      :data="tableData.filter(data => !keyValue || data.name.toLowerCase().includes(keyValue.toLowerCase()))"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -40,8 +41,10 @@
         prop="name"
         label="网站名称"
         width="120"
+        sortable
       />
       <el-table-column
+        width="150"
         header-align="center"
         align="center"
         prop="url"
@@ -49,6 +52,7 @@
         show-overflow-tooltip
       />
       <el-table-column
+        width="150"
         header-align="center"
         align="center"
         prop="logo"
@@ -70,6 +74,24 @@
         sortable
       >
         <template slot-scope="scope">{{ scope.row.categoryName }}</template>
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="关键字"
+        width="120"
+        prop="keywords"
+      >
+        <template v-if="scope.row.keywords && scope.row.keywords.length > 0" slot-scope="scope">
+          <el-tag
+            v-for="(tag, index) in scope.row.keywords"
+            :key="tag+index"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(scope, tag)">
+            {{ tag }}
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -106,6 +128,8 @@
         <template slot-scope="scope">{{ scope.row.gmtModified | dataFormat }}</template>
       </el-table-column>
       <el-table-column
+        width="150"
+        fixed="right"
         header-align="center"
         align="center"
         label="操作"
@@ -139,12 +163,14 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getAllWebsiteByUserId, delWebsiteById, batchDelWebsite } from '@/api/add-website'
+  import { getAllWebsiteByUserId, delWebsiteById, batchDelWebsite, modifyWebsiteKeywords } from '@/api/add-website'
+  // 确认删除网站
   const confirmBatchDel = {
     type: 'warning',
     info: '即将删除网站信息！',
     title: '删除网站信息'
   }
+  // 删除成功后提示信息
   const delMsg = {
     type: 'success',
     info: '删除成功'
@@ -181,7 +207,8 @@
           for (let i = 0; i < this.tableData.length; i++) {
             // 通过分类ID获取分类名称
             const category = this.handleGetWbCategoryName(this.tableData[i].idCategory)
-            if (category.name) {
+            this.tableData[i].keywords = this._tools.commonTools.strToArr(this.tableData[i].keywords)
+            if (category && category.name) {
               this.tableData[i]['categoryName'] = category.name
             }
           }
@@ -249,17 +276,47 @@
           }
         })
       },
+      // 得到网站ID列表
       handleGetIdList() {
         for (let i = 0; i < this.multipleSelection.length; i++) {
           this.idList.push(this.multipleSelection[i].id)
         }
       },
+      // 批量删除网站
       handleDelTableData() {
         for (let i = 0; i < this.idList.length; i++) {
           this._lodash.remove(this.tableData, item => {
             return item.id === this.idList[i]
           })
         }
+      },
+      // 删除标签
+      handleClose(scope, tag) {
+        this._lodash.remove(scope.row.keywords, item => {
+          return item === tag
+        })
+        let keywordsStr = this._tools.commonTools.arrToStr(scope.row.keywords)
+        if (this._tools.commonTools.isEmpty(keywordsStr)) {
+          keywordsStr = 'null'
+        }
+        console.log(keywordsStr)
+        modifyWebsiteKeywords(scope.row.id, keywordsStr).then(res => {
+          if (res.code === 'OW20000') {
+            let updateIndex = ''
+            this._lodash.map(this.tableData, (item, index) => {
+              if (item.id === scope.row.id) {
+                updateIndex = index
+              }
+            })
+            /*
+            *   ELEMENT-UI 更新TABLEDATA 中 ROW的某一个属性时，没有更新视图的问题
+            *   table表格数据，每次只能监听整个row的变化，row中某个属性变化时，是无法追踪的
+            *   在更新row中的属性后需要调用this.$set(tableData,index,row) 来更新tableData的数据
+            *   其中index是数据在tableData中的索引
+            * */
+            this.$set(this.tableData, updateIndex, scope.row)
+          }
+        })
       }
     }
   }
@@ -279,5 +336,8 @@
   }
   .btn-wrapper {
     padding-left: 20px;
+  }
+  .el-tag + .el-tag {
+    margin-top: 4px;
   }
 </style>
