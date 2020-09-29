@@ -207,7 +207,12 @@
           for (let i = 0; i < this.tableData.length; i++) {
             // 通过分类ID获取分类名称
             const category = this.handleGetWbCategoryName(this.tableData[i].idCategory)
-            this.tableData[i].keywords = this._tools.commonTools.strToArr(this.tableData[i].keywords)
+            // 将数组转换成字符串
+            if (this.tableData[i].keywords === 'null') {
+              this.tableData[i].keywords = []
+            } else {
+              this.tableData[i].keywords = this._tools.commonTools.strToArr(this.tableData[i].keywords)
+            }
             if (category && category.name) {
               this.tableData[i]['categoryName'] = category.name
             }
@@ -299,7 +304,6 @@
         if (this._tools.commonTools.isEmpty(keywordsStr)) {
           keywordsStr = 'null'
         }
-        console.log(keywordsStr)
         modifyWebsiteKeywords(scope.row.id, keywordsStr).then(res => {
           if (res.code === 'OW20000') {
             let updateIndex = ''
