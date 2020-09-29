@@ -197,6 +197,7 @@
             this._tools.eleEnc.eleLoading()
             if (this.isEdit) {
               // 修改网站信息
+              this.formAddWebsite.keywords = this._tools.commonTools.arrToStr(this.formAddWebsite.keywords)
               modifyWebsite(this.formAddWebsite).then(res => {
                 this._tools.eleEnc.closeEleLoading()
                 if (res && res.code === 'OW20000') {
