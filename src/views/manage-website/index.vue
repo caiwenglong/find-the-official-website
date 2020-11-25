@@ -19,134 +19,137 @@
         </el-input>
       </el-col>
     </el-row>
-    <el-table
-      ref="multipleTableWebsite"
-      v-loading="listLoading"
-      height="430"
-      tooltip-effect="dark"
-      style="width: 100%"
-      :default-sort="{prop: 'gmtModified', order: 'descending'}"
-      :data="tableData.filter(data => !keyValue || data.name.toLowerCase().includes(keyValue.toLowerCase()))"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column
-        header-align="center"
-        align="center"
-        type="selection"
-        width="55"
-      />
-      <el-table-column
-        header-align="center"
-        align="center"
-        prop="name"
-        label="网站名称"
-        width="120"
-        sortable
-      />
-      <el-table-column
-        width="150"
-        header-align="center"
-        align="center"
-        prop="url"
-        label="网站地址"
-        show-overflow-tooltip
-      />
-      <el-table-column
-        width="150"
-        header-align="center"
-        align="center"
-        prop="logo"
-        label="网站logo"
-        show-overflow-tooltip
-      >
-        <template slot-scope="scope">
-          <a class="logo-wrapper" :href="scope.row.url">
-            <img :src="scope.row.logo" alt="logo">
-          </a>
-        </template>
-      </el-table-column>
-      <el-table-column
-        header-align="center"
-        align="center"
-        label="网站分类"
-        width="120"
-        prop="category"
-        sortable
-      >
-        <template slot-scope="scope">{{ scope.row.categoryName }}</template>
-      </el-table-column>
-      <el-table-column
-        header-align="center"
-        align="center"
-        label="关键字"
-        width="120"
-        prop="keywords"
-      >
-        <template v-if="scope.row.keywords && scope.row.keywords.length > 0" slot-scope="scope">
-          <el-tag
-            v-for="(tag, index) in scope.row.keywords"
-            :key="tag+index"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(scope, tag)">
-            {{ tag }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        header-align="center"
-        align="center"
-        prop="hitsToday"
-        label="今日点击量"
-        width="100"
-      />
-      <el-table-column
-        header-align="center"
-        align="center"
-        prop="hitsTotal"
-        label="总点击量"
-        width="100"
-      />
-      <el-table-column
-        header-align="center"
-        align="center"
-        label="创建日期"
-        width="120"
-        prop="gmtCreate"
-        sortable
-      >
-        <template slot-scope="scope">{{ scope.row.gmtCreate | dataFormat }}</template>
-      </el-table-column>
-      <el-table-column
-        header-align="center"
-        align="center"
-        label="修改日期"
-        width="120"
-        prop="gmtModified"
-        sortable
-      >
-        <template slot-scope="scope">{{ scope.row.gmtModified | dataFormat }}</template>
-      </el-table-column>
-      <el-table-column
-        width="150"
-        fixed="right"
-        header-align="center"
-        align="center"
-        label="操作"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row.id)"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <overlay-scrollbars ref="osComponentRef" :options="scrollbarsOptions" style="height:430px;width: 100%">
+      <div>
+        <el-table
+          ref="multipleTableWebsite"
+          v-loading="listLoading"
+          tooltip-effect="dark"
+          :default-sort="{prop: 'gmtModified', order: 'descending'}"
+          :data="tableData.filter(data => !keyValue || data.name.toLowerCase().includes(keyValue.toLowerCase()))"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            header-align="center"
+            align="center"
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="name"
+            label="网站名称"
+            width="120"
+            sortable
+          />
+          <el-table-column
+            width="150"
+            header-align="center"
+            align="center"
+            prop="url"
+            label="网站地址"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            width="150"
+            header-align="center"
+            align="center"
+            prop="logo"
+            label="网站logo"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <a class="logo-wrapper" :href="scope.row.url">
+                <img :src="scope.row.logo" alt="logo">
+              </a>
+            </template>
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="网站分类"
+            width="120"
+            prop="category"
+            sortable
+          >
+            <template slot-scope="scope">{{ scope.row.categoryName }}</template>
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="关键字"
+            width="120"
+            prop="keywords"
+          >
+            <template v-if="scope.row.keywords && scope.row.keywords.length > 0" slot-scope="scope">
+              <el-tag
+                v-for="(tag, index) in scope.row.keywords"
+                :key="tag+index"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(scope, tag)"
+              >
+                {{ tag }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="hitsToday"
+            label="今日点击量"
+            width="100"
+          />
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="hitsTotal"
+            label="总点击量"
+            width="100"
+          />
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="创建日期"
+            width="120"
+            prop="gmtCreate"
+            sortable
+          >
+            <template slot-scope="scope">{{ scope.row.gmtCreate | dataFormat }}</template>
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="修改日期"
+            width="120"
+            prop="gmtModified"
+            sortable
+          >
+            <template slot-scope="scope">{{ scope.row.gmtModified | dataFormat }}</template>
+          </el-table-column>
+          <el-table-column
+            width="150"
+            header-align="center"
+            align="center"
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="handleEdit(scope.$index, scope.row)"
+              >编辑</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row.id)"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </overlay-scrollbars>
+
     <div class="pagination-wrapper">
       <el-pagination
         :page-size="pageSize"
@@ -186,9 +189,19 @@
         keyValue: '', // 关键字搜索
         currentPage: 1, // 当前页
         pageSize: 5,
-        total: 0
+        total: 0,
+        scrollbarsOptions: {
+          className: 'os-theme-dark',
+          resize: 'both',
+          sizeAutoCapable: true,
+          paddingAbsolute: true,
+          scrollbars: {
+            clickScrolling: true
+          }
+        }
       }
     },
+    inject: ['reload'],
     computed: {
       ...mapGetters([
         'idAdmin'
@@ -200,6 +213,7 @@
       this.fetchData()
     },
     methods: {
+      // 获取网站数据
       fetchData() {
         getAllWebsiteByUserId(this.idAdmin, this.currentPage, this.pageSize).then(response => {
           this.tableData = response.data.tbWebsites
@@ -231,6 +245,7 @@
           })
         })
       },
+      // 通过分类ID获取分类名称
       handleGetWbCategoryName(idCategory) {
         return this._lodash.find(this.industryCategory, category => {
           return category.id === idCategory
@@ -275,7 +290,7 @@
                 this.handleDelTableData()
                 this._tools.eleEnc.closeEleLoading()
                 this._tools.eleEnc.ybyMessage(delMsg)
-                this.$router.push({ name: 'manege-website' })
+                this.reload()
               }
             })
           }

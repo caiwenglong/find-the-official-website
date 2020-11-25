@@ -4,7 +4,6 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/styles/index.scss' // global css
 
@@ -17,25 +16,26 @@ import '@/permission' // permission control
 
 import * as _ from 'lodash'
 import { tools } from './utils/tools/index'
-import * as filters from './plugins/filters'
+import * as filters from './share/filters'
 
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
- */
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+import OverlayScrollbars from 'overlayscrollbars'
+import { OverlayScrollbarsPlugin } from 'overlayscrollbars-vue'
+import { i18n } from './share/i18n'
+Vue.use(OverlayScrollbarsPlugin)
+Vue.use(OverlayScrollbars)
+Vue.use(i18n)
+
+// 调用国际化初始化函数
+initLocalLang()
+
+// 国际化初始化函数
+function initLocalLang() {
+  Vue.use(ElementUI, {
+    i18n: (key, value) => i18n.t(key, value)
+  })
 }
 
-// set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
-// 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
 Vue.prototype._lodash = _
 Vue.prototype._tools = tools
 
@@ -47,6 +47,7 @@ Object.keys(filters).forEach(key => {
 
 new Vue({
   el: '#app',
+  i18n,
   router,
   store,
   render: h => h(App)
