@@ -1,4 +1,4 @@
-import { getWbCategories } from '@/api/add-website'
+import { getWbCategories, getWebsite } from '@/api/add-website'
 
 const state = {
   wbCategories: []
@@ -18,6 +18,14 @@ const actions = {
           commit('SET_CATEGORY', res.data.wbCategoryList)
         }
         resolve(res.data.wbCategoryList)
+      })
+    })
+  },
+
+  getWebsite({ commit }) {
+    return new Promise((resolve, reject) => {
+      getWebsite().then(res => {
+        console.log(res)
       })
     })
   }

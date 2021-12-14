@@ -1,3 +1,4 @@
+
 <template>
   <div class="page-upload-website">
     <el-upload
@@ -16,7 +17,10 @@
       :file-list="fileList"
     >
       <i class="el-icon-upload" />
-      <div class="el-upload__text">将excel文件拖到此处，或<em>点击上传</em></div>
+      <div class="el-upload__text">
+        将excel文件拖到此处，或
+        <em>点击上传</em>
+      </div>
       <div slot="tip" class="el-upload__tip">只能上传xlsx文件，且不超过10M</div>
     </el-upload>
     <div class="btn-wrapper">
@@ -28,99 +32,99 @@
 
 <script>
 
-  import { batchAddWebsite } from '@/api/add-website'
-  import { mapGetters } from 'vuex'
+import { batchAddWebsite } from '@/api/add-website'
+import { mapGetters } from 'vuex'
 
-  export default {
-    data() {
-      return {
-        limitNum: 1, // 上传excel时，同时允许上传的最大数
-        fileList: [], // excel文件列表
-        file: ''
-      }
-    },
-    computed: {
-      ...mapGetters([
-        'idAdmin'
-      ])
-    },
-    methods: {
-      // 文件超出个数限制时的钩子
-      exceedFile(files, fileList) {
-        this.$message.warning(`只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`)
-      },
-      // 文件状态改变时的钩子
-      fileChange(file, fileList) {
-        this.file = file.raw
-        this.fileList.push(file.raw)
-      },
-      // 上传文件之前的钩子, 参数为上传的文件,若返回 false 或者返回 Promise 且被 reject，则停止上传
-      beforeUploadFile(file) {
-        const extension = file.name.substring(file.name.lastIndexOf('.') + 1)
-        const size = file.size / 1024 / 1024
-        if (extension !== 'xlsx') {
-          this.$message.warning('只能上传后缀是.xlsx的文件')
-        }
-        if (size > 10) {
-          this.$message.warning('文件大小不得超过10M')
-        }
-      },
-      // 文件上传成功时的钩子
-      handleSuccess(res, file, fileList) {
-        this.file = file
-        this.$message.success('文件上传成功')
-      },
-      // 文件上传失败时的钩子
-      // eslint-disable-next-line handle-callback-err
-      handleError(err, file, fileList) {
-        this.$message.error('文件上传失败')
-      },
-      /**
-       * @return {string}
-       */
-      UploadUrl: function() {
-        // 因为action参数是必填项，我们使用二次确认进行文件上传时，直接填上传文件的url会因为没有参数导致api报404，所以这里将action设置为一个返回为空的方法就行，避免抛错
-        return ''
-      },
-      handleUploadFile() {
-        if (this.fileList.length === 0) {
-          this.$message.warning('请上传文件')
-        } else {
-          const formData = new FormData()
-          formData.append('file', this.file)
-          formData.append('idAdmin', this.idAdmin)
-          this._tools.eleEnc.eleLoading()
-          batchAddWebsite(formData).then(res => {
-            this._tools.eleEnc.closeEleLoading()
-            if (res.code === 'OW20000') {
-              const cfmObj = {
-                type: 'success',
-                info: '添加成功'
-              }
-              this._tools.eleEnc.ybyMessage(cfmObj)
-              this.$router.push({ name: 'manege-website' })
-            }
-          })
-        }
-      },
-      handleCancel() {
-        this.$router.push({ name: 'manege-website' })
-      }
-
+export default {
+  data () {
+    return {
+      limitNum: 1, // 上传excel时，同时允许上传的最大数
+      fileList: [], // excel文件列表
+      file: ''
     }
+  },
+  computed: {
+    ...mapGetters([
+      'idAdmin'
+    ])
+  },
+  methods: {
+    // 文件超出个数限制时的钩子
+    exceedFile (files, fileList) {
+      this.$message.warning(`只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`)
+    },
+    // 文件状态改变时的钩子
+    fileChange (file, fileList) {
+      this.file = file.raw
+      this.fileList.push(file.raw)
+    },
+    // 上传文件之前的钩子, 参数为上传的文件,若返回 false 或者返回 Promise 且被 reject，则停止上传
+    beforeUploadFile (file) {
+      const extension = file.name.substring(file.name.lastIndexOf('.') + 1)
+      const size = file.size / 1024 / 1024
+      if (extension !== 'xlsx') {
+        this.$message.warning('只能上传后缀是.xlsx的文件')
+      }
+      if (size > 10) {
+        this.$message.warning('文件大小不得超过10M')
+      }
+    },
+    // 文件上传成功时的钩子
+    handleSuccess (res, file, fileList) {
+      this.file = file
+      this.$message.success('文件上传成功')
+    },
+    // 文件上传失败时的钩子
+    // eslint-disable-next-line handle-callback-err
+    handleError (err, file, fileList) {
+      this.$message.error('文件上传失败')
+    },
+    /**
+     * @return {string}
+     */
+    UploadUrl: function () {
+      // 因为action参数是必填项，我们使用二次确认进行文件上传时，直接填上传文件的url会因为没有参数导致api报404，所以这里将action设置为一个返回为空的方法就行，避免抛错
+      return ''
+    },
+    handleUploadFile () {
+      if (this.fileList.length === 0) {
+        this.$message.warning('请上传文件')
+      } else {
+        const formData = new FormData()
+        formData.append('file', this.file)
+        formData.append('idAdmin', this.idAdmin)
+        this._tools.eleEnc.eleLoading()
+        batchAddWebsite(formData).then(res => {
+          this._tools.eleEnc.closeEleLoading()
+          if (res.code === 'OW20000') {
+            const cfmObj = {
+              type: 'success',
+              info: '添加成功'
+            }
+            this._tools.eleEnc.ybyMessage(cfmObj)
+            this.$router.push({ name: 'manege-website' })
+          }
+        })
+      }
+    },
+    handleCancel () {
+      this.$router.push({ name: 'manege-website' })
+    }
+
   }
+}
 </script>
 
 <style scoped lang="scss">
- .page-upload-website {
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   margin-top: -200px;
-   margin-left: -180px;
-   text-align: center;
- }
-  .btn-wrapper {
-    margin-top: 32px;
-  }
+.page-upload-website {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -200px;
+  margin-left: -180px;
+  text-align: center;
+}
+.btn-wrapper {
+  margin-top: 32px;
+}
 </style>

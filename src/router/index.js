@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from "@/layout";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -32,79 +32,81 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
+    path: "/login",
+    component: () => import("@/views/login/index"),
     hidden: true
   },
 
   {
-    path: '/404',
-    component: () => import('@/views/404'),
+    path: "/404",
+    component: () => import("@/views/404"),
     hidden: true
   },
 
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
+    redirect: "/dashboard",
+    children: [
+      {
+        path: "dashboard",
+        name: "Dashboard",
+        component: () => import("@/views/dashboard/index"),
+        meta: { title: "Dashboard", icon: "dashboard" }
+      }
+    ]
   },
 
   {
-    path: '/add-website',
+    path: "/add-website",
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'add-website',
-        component: () => import('@/views/add-website/index'),
-        meta: { title: '添加网站', icon: 'add-website' }
+        path: "index",
+        name: "add-website",
+        component: () => import("@/views/add-website/index"),
+        meta: { title: "添加网站", icon: "add-website" }
       }
     ]
   },
   {
-    path: '/edit-website',
+    path: "/edit-website",
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'edit-website',
-        component: () => import('@/views/add-website/index'),
-        meta: { title: '修改网站', icon: 'add-website' }
+        path: "index",
+        name: "edit-website",
+        component: () => import("@/views/add-website/index"),
+        meta: { title: "修改网站", icon: "add-website" }
       }
     ],
     hidden: true
   },
   {
-    path: '/upload-website',
+    path: "/upload-website",
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'upload-website',
-        component: () => import('@/views/upload-website/index'),
-        meta: { title: '批量上传网站', icon: 'upload-website' }
+        path: "index",
+        name: "upload-website",
+        component: () => import("@/views/upload-website/index"),
+        meta: { title: "批量上传网站", icon: "upload-website" }
       }
     ]
   },
   {
-    path: '/manage=website',
+    path: "/manage=website",
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'manege-website',
-        component: () => import('@/views/manage-website/index'),
-        meta: { title: '管理网站', icon: 'mange-website' }
+        path: "index",
+        name: "manege-website",
+        component: () => import("@/views/manage-website/index"),
+        meta: { title: "管理网站", icon: "mange-website" }
       }
     ]
   }
-]
+];
 
 /**
  * asyncRoutes
@@ -112,21 +114,22 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
-]
+  { path: "*", redirect: "/404", hidden: true }
+];
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  });
 
-const router = createRouter()
+const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;

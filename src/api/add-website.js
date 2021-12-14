@@ -8,6 +8,13 @@ export function addWebsite(form) {
     data: form
   })
 }
+// 添加单个网站
+export function getWebsite() {
+  return request({
+    url: '/user-api//api.php/provide/type/?ac=list',
+    method: 'get'
+  })
+}
 
 // 批量添加网站
 export function batchAddWebsite(file) {
